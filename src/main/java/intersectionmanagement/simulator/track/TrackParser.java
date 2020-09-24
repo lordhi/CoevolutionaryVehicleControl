@@ -8,62 +8,24 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import intersectionmanagement.simulator.Utility;
+import intersectionmanagement.simulator.control.CarController;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 public class TrackParser {
+    public static Node calculateBezierCurve(int degree, int precision,
+        float[] x, float[] y, boolean active,
+        CarController controller) {
 
-    // Takes a track json file and turns it into a bunch of nodes
-    // See the readme for specifics on how the track files work
-    public static List<Node> parseTrack(String trackPath, boolean pedestrian) throws IOException {
-        String trackFile = Utility.loadResource(trackPath);
-        JSONObject trackJSON = new JSONObject(trackFile);
-
-        List<Node> curves = new LinkedList<>();
-        JSONArray curvesJSON = trackJSON.getJSONArray("curves");
-        for (Object curveJSON : curvesJSON) {
-            JSONObject curveData = (JSONObject) curveJSON;
-            boolean curvePedestrian;
-            if (!curveData.has("pedestrian")) {
-                curvePedestrian = false;
-            }
-            else  {
-                curvePedestrian = curveData.getBoolean("pedestrian");
-            }
-
-            if (curvePedestrian != pedestrian) {
-                continue;
-            }
-
-            int degree = curveData.getInt("degree");
-            int precision = 2; // default
-            if (curveData.has("precision")) {
-                precision = curveData.getInt("precision");
-            }
-            float[] x = new float[degree];
-            float[] y = new float[degree];
-            for (int i = 0; i < degree; i++) {
-                x[i] = curveData.getFloat(String.format("x_%d", i));
-                y[i] = curveData.getFloat(String.format("y_%d", i));
-            }
-
-            boolean active = curveData.getBoolean("active");
-            curves.add(calculateBezierCurve(degree, precision, x, y, active));
-        }
-
-        curves = linkCurves(curves);
-        return curves;
-    }
-
-    public static Node calculateBezierCurve(int degree, int precision, float[] x, float[] y, boolean active) {
         // Precision should specify number of points, since point has to be added at the end, use -1
         float increment = 1.0f/(precision-1);
 
-        Node root = new Node(x[0], y[0], active);
+        Node root = new Node(x[0], y[0], active, controller);
         Node currentNode = root;
 
         for (float t = increment; t < 1; t += increment) {
-            Node nextNode = calculateNode(degree, t, x, y, active);
+            Node nextNode = calculateNode(degree, t, x, y, active, controller);
             currentNode.addNextNode(nextNode);
             currentNode = nextNode;
         }
@@ -72,7 +34,9 @@ public class TrackParser {
         return root;
     }
 
-    private static Node calculateNode(int degree, float t, float[] x, float[] y, boolean active) {
+    private static Node calculateNode(int degree, float t,
+        float[] x, float[] y, boolean active,
+        CarController controller) {
         float nextNodeX;
         float nextNodeY;
 
@@ -104,11 +68,11 @@ public class TrackParser {
                 throw new InvalidBezierCurveDegreeException(degree);
         }
 
-        return new Node(nextNodeX, nextNodeY, active);
+        return new Node(nextNodeX, nextNodeY, active, controller);
     }
 
     // Finds curves that have a start point equal to the end point of another curve and links them together
-    private static List<Node> linkCurves(List<Node> roots) {
+    public static List<Node> linkCurves(List<Node> roots) {
         // If a root node is linked backwards, then it is no longer a root node, store these here
         List<Node> linkedNodes = new LinkedList<>();
         for (Node node : roots) {

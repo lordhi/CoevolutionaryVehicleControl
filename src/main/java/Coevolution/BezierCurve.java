@@ -3,6 +3,7 @@ package coevolution;
 import java.util.Arrays;
 
 import intersectionmanagement.simulator.track.TrackParser;
+import intersectionmanagement.simulator.control.NeuralNetworkController;
 
 public class BezierCurve
 implements Comparable<BezierCurve>
@@ -30,7 +31,8 @@ implements Comparable<BezierCurve>
 		this(generateArray(startX, endX, degree), generateArray(startY, endY, degree), precision, active, population);
 	}
 
-	public BezierCurve(float xPositions[], float yPositions[], int precision, boolean active, int population)
+	public BezierCurve(float xPositions[], float yPositions[],
+		int precision, boolean active, int population)
 	{
 		this.value = 2147483647;
 		this.population = population;
@@ -53,10 +55,16 @@ implements Comparable<BezierCurve>
 		this(xPositions, yPositions, 10, true, population);
 	}
 
+	public intersectionmanagement.simulator.track.Node asSimCurve(byte controller[])
+	{
+		return TrackParser.calculateBezierCurve(degree,
+			precision, xPositions, yPositions, active, new NeuralNetworkController(controller));
+	}
+
 	public intersectionmanagement.simulator.track.Node asSimCurve()
 	{
 		return TrackParser.calculateBezierCurve(degree,
-			precision, xPositions, yPositions, active);
+			precision, xPositions, yPositions, active, null);
 	}
 
 	private static float[] generateArray(float firstVal, float lastVal, int length)

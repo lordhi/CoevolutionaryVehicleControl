@@ -42,7 +42,10 @@ public class Car extends Actor {
         controllerActive = currentNode.isActive();
 
         if (controllerActive) {
-            targetSpeed = controller.getTargetSpeed(getSensorValues(actorArray));
+            if (currentNode.controller == null)
+                targetSpeed = controller.getTargetSpeed(getSensorValues(actorArray));
+            else
+                targetSpeed = currentNode.controller.getTargetSpeed(getSensorValues(actorArray));
         } else {
             targetSpeed = inactiveController.getTargetSpeed(getSensorValues(actorArray, 1)); // use the front sensor just to get the speed of the car in front
         }

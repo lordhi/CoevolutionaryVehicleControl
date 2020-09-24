@@ -87,7 +87,7 @@ public class Training
 			{
 				best = nc.getSomeCrashValue();
 				System.err.println(Arrays.toString(nc.getBestNetwork()));
-				System.err.println(Arrays.toString(ipc.getBestIntersectionPrintable()));
+				System.err.println(bezierCurveArrayToString(ipc.getBestIntersectionPrintable()));
 				System.err.println();
 			}
 
@@ -141,13 +141,21 @@ public class Training
 		NeatController nc = new NeatController();
 		long start;
 
+		int best = 2147483647;
 		for (int i=1; i<1000; i++)
 		{
 			start = System.currentTimeMillis();
 			nc.setTrack(ipc.getBestIntersection());
 			nc.run();
 
-			System.err.println(Arrays.toString(nc.getBestNetwork()));
+			if (best > nc.getSomeCrashValue())
+			{
+				best = nc.getSomeCrashValue();
+				System.err.println(Arrays.toString(nc.getBestNetwork()));
+				System.err.println(bezierCurveArrayToString(ipc.getBestIntersectionPrintable()));
+				System.err.println();
+			}
+
 			System.out.println(i + ": " + nc.getSomeCrashValue() + " (" + (System.currentTimeMillis()-start)/1000 + " s)");
 		}
 	}

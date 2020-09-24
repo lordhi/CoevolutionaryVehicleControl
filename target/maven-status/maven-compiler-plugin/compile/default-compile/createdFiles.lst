@@ -16,6 +16,7 @@ intersectionmanagement/simulator/spawner/PedestrianSpawner.class
 coevolution/IntersectionConfig.class
 intersectionmanagement/simulator/track/InvalidBezierCurveDegreeException.class
 coevolution/Node.class
+coevolution/Experiment1.class
 coevolution/IntersectionPopulationController.class
 coevolution/ANNFitnessMultithread.class
 coevolution/BezierCurve.class
@@ -25,7 +26,6 @@ coevolution/NodePopulationController.class
 intersectionmanagement/trial/Renderer.class
 coevolution/SimulatorConfig.class
 intersectionmanagement/simulator/control/HeuristicController.class
-intersectionmanagement/trial/Main.class
 coevolution/Training.class
 coevolution/NeatController.class
 intersectionmanagement/simulator/spawner/CarSpawner.class

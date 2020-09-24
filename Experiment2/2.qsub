@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -l select=1:ncpus=24
+#PBS -l walltime=10:00:00
+#PBS -q smp
+#PBS -P CSCI1142
+#PBS -M wllkae001@myuct.ac.za
+#PBS -m be
+#PBS -e /mnt/lustre/users/kwilliams/Experiment2/std_errneat.txt
+#PBS -o /mnt/lustre/users/kwilliams/Experiment2/neatres.txt
+#PBS -N LargeNeatIntersection
+ 
+module add chpc/openmpi/1.10.3/gcc-5.1.0_java-1.8.0_73
+ 
+cd /mnt/lustre/users/kwilliams/Experiment2
+java -jar Training-1.0-SNAPSHOT-jar-with-dependencies.jar 1000 neat
