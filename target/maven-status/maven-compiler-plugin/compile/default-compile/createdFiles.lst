@@ -1,9 +1,9 @@
 intersectionmanagement/simulator/Actor.class
 intersectionmanagement/trial/Trial.class
-coevolution/Test.class
 coevolution/CrashScore.class
 intersectionmanagement/simulator/control/NeuralNetworkController.class
 intersectionmanagement/simulator/track/TrackParser.class
+coevolution/Experiment.class
 coevolution/MersenneTwister.class
 coevolution/IntersectionFitnessMultithread.class
 intersectionmanagement/trial/Trial$SpawnerFactory.class
@@ -26,9 +26,9 @@ intersectionmanagement/trial/Renderer.class
 coevolution/SimulatorConfig.class
 intersectionmanagement/simulator/control/HeuristicController.class
 intersectionmanagement/trial/Main.class
+coevolution/Training.class
 coevolution/NeatController.class
 intersectionmanagement/simulator/spawner/CarSpawner.class
 intersectionmanagement/simulator/control/CarController.class
-coevolution/SavedRendered.class
 intersectionmanagement/simulator/car/Car.class
 intersectionmanagement/simulator/pedestrian/Pedestrian.class
