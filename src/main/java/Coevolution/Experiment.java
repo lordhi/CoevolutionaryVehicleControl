@@ -16,11 +16,23 @@ implements Runnable
 	{
 		int max = Integer.parseInt(args[0]);
 		readTrackAndController(args[1]);
+		startAll(max);
+	}
+
+	public static void startAll(int max)
+	{
+		Thread threads[] = new Thread[max];
 		for (int i=0; i<max; i++)
 		{
-			Thread t = new Thread(new Experiment());
-			t.run();
+			threads[i] = new Thread(new Experiment());
+			threads[i].start();
 		}
+		for (int i=0; i<max; i++)
+			try{
+				threads[i].join();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 	}
 
 	public Experiment()
@@ -48,7 +60,7 @@ implements Runnable
 		track = StringToTrack(vals[1]);
 	}
 
-	private static List<intersectionmanagement.simulator.track.Node> StringToTrack(String s)
+	public static List<intersectionmanagement.simulator.track.Node> StringToTrack(String s)
 	{
 		List<intersectionmanagement.simulator.track.Node> track = new ArrayList<>();
 

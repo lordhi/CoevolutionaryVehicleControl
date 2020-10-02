@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -l select=1:ncpus=24
+#PBS -l walltime=20:00:00
+#PBS -q smp
+#PBS -P CSCI1142
+#PBS -M wllkae001@myuct.ac.za
+#PBS -m be
+#PBS -e /mnt/lustre/users/kwilliams/generalneat/std_err.txt
+#PBS -o /mnt/lustre/users/kwilliams/generalneat/std_out.txt
+#PBS -N GeneralNeatTraining
+ 
+module add chpc/openmpi/1.10.3/gcc-5.1.0_java-1.8.0_73
+ 
+cd /mnt/lustre/users/kwilliams/generalneat
+java -jar Training-1.0-SNAPSHOT-jar-with-dependencies.jar

@@ -14,10 +14,18 @@ implements Runnable
 {
 	ArrayList<BezierCurve[]> curvePopulations;
 	double[] linearRankTable = new double[IntersectionConfig.populationSize];
+	boolean generateRandomly = true;
+
 
 	public IntersectionPopulationController(int numberOfEntries, int lanesPerEntry)
 	{
 		this(numberOfEntries, lanesPerEntry, false);
+	}
+
+	public IntersectionPopulationController(boolean generateRandomly, int numberOfEntries, int lanesPerEntry)
+	{
+		this(numberOfEntries, lanesPerEntry, false);
+		this.generateRandomly = generateRandomly;
 	}
 
 	public IntersectionPopulationController(int numberOfEntries, int lanesPerEntry,
@@ -148,11 +156,27 @@ implements Runnable
 					for(int lane=0; lane<lanesPerEntry; lane++)
 					{
 						BezierCurve population[] = new BezierCurve[IntersectionConfig.populationSize];
+
 						for(int i=0; i<IntersectionConfig.populationSize; i++)
-							population[i] = new BezierCurve(
+						{
+							if (generateRandomly)
+							{
+								population[i] = new BezierCurve(
 								xCoords[0][entryside][lane], yCoords[0][entryside][lane],
 								xCoords[1][exitside][lane], yCoords[1][exitside][lane],
 								IntersectionConfig.degree, curvePopulations.size());
+							}else{
+								float x1 = xCoords[0][entryside][lane];
+								float x2 = xCoords[1][exitside][lane];
+								float y1 = yCoords[0][entryside][lane];
+								float y2 = yCoords[1][exitside][lane];
+
+								float newX[] = {x1, 200.0f, x2};
+								float newY[] = {y1, 200.0f, y2};
+
+								population[i] = new BezierCurve(newX, newY, curvePopulations.size());
+							}
+						}
 						curvePopulations.add(population);
 					}
 				}

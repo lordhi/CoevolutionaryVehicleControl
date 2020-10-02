@@ -2,7 +2,7 @@ package coevolution;
 
 public class SimulatorConfig
 {
-	public static int simulationSteps = 100000;//4000;
+	public static int simulationSteps = 4000;//100000;
 
 	public final static String spawnerType = "constant";
 	public final static int minPeriod = 200;

@@ -4,6 +4,7 @@ coevolution/CrashScore.class
 intersectionmanagement/simulator/control/NeuralNetworkController.class
 intersectionmanagement/simulator/track/TrackParser.class
 coevolution/Experiment.class
+coevolution/TrainTest.class
 coevolution/MersenneTwister.class
 coevolution/IntersectionFitnessMultithread.class
 intersectionmanagement/trial/Trial$SpawnerFactory.class

@@ -11,18 +11,22 @@ public class Training
 	public static void main(String args[])
 	throws Exception
 	{
-		testNeatOnly();
+		generateBasic();
 	}
 
-	public static void testStandard()
+	public static String[] testStandard(int directions)
 	throws Exception
 	{
-		IntersectionPopulationController ipc = new IntersectionPopulationController(8,1);
+		int max = directions==4 ? 350 : 80;
+		IntersectionPopulationController ipc = new IntersectionPopulationController(directions,1);
 
 		NodePopulationController npc = new NodePopulationController();
 		long start;
 		int best = 2147483647;
-		for (int i=1; i<500; i++)
+
+		String[] bestResults = new String[2];
+
+		for (int i=1; i<max; i++)
 		{
 			start = System.currentTimeMillis();
 			npc.setTrack(ipc.getBestIntersection());
@@ -40,14 +44,12 @@ public class Training
 			if (best > npc.getSomeCrashValue())
 			{
 				best = npc.getSomeCrashValue();
-				System.err.println(Arrays.toString(npc.getBestNetworkBytes()));
-				System.err.println(bezierCurveArrayToString(ipc.getBestIntersectionPrintable()));
-				System.err.println();
+				bestResults[0] = Arrays.toString(npc.getBestNetworkBytes());
+				bestResults[1] = bezierCurveArrayToString(ipc.getBestIntersectionPrintable());
 			}
-
-			System.out.println(i + ": " + npc.getSomeCrashValue() + " | " + best +  " (" + (System.currentTimeMillis()-start)/1000 + " s)");
 		}
-		
+
+		return bestResults;		
 	}
 
 	private static String bezierCurveArrayToString(BezierCurve curves[])
@@ -60,16 +62,22 @@ public class Training
 		return tmp.substring(0, tmp.length()-1);
 	}
 
-	public static void testNEAT()
+	public static String[] testNEAT(int directions)
 	throws Exception
 	{
-		IntersectionPopulationController ipc = new IntersectionPopulationController(8,1);
+		int max = directions==4 ? 600 : 80;
+
+		IntersectionPopulationController ipc;
 
 		NeatController nc = new NeatController();
 		long start;
 		int best = 2147483647;
-		for (int i=1; i<2000; i++)
+		String[] bestResults = new String[2];
+
+
+		for (int i=1; i<max; i++)
 		{
+			ipc = new IntersectionPopulationController(directions,1);
 			start = System.currentTimeMillis();
 			nc.setTrack(ipc.getBestIntersection());
 			ipc.setController(nc.getBestNetwork());
@@ -86,14 +94,11 @@ public class Training
 			if (best > nc.getSomeCrashValue())
 			{
 				best = nc.getSomeCrashValue();
-				System.err.println(Arrays.toString(nc.getBestNetwork()));
-				System.err.println(bezierCurveArrayToString(ipc.getBestIntersectionPrintable()));
-				System.err.println();
+				bestResults[0] = Arrays.toString(nc.getBestNetwork());
+				bestResults[1] = bezierCurveArrayToString(ipc.getBestIntersectionPrintable());
 			}
-
-			System.out.println(i + ": " + nc.getSomeCrashValue() + " | " + best +  " (" + (System.currentTimeMillis()-start)/1000 + " s)");
 		}
-		
+		return bestResults;
 	}
 		
 
@@ -103,7 +108,7 @@ public class Training
 		NodePopulationController npc = new NodePopulationController();
 		byte[] controller = npc.getBestNetworkBytes();
 
-		IntersectionPopulationController ipc = new IntersectionPopulationController(4,1);
+		IntersectionPopulationController ipc = new IntersectionPopulationController(false, 4,1);
 
 		long start;
 		for (int i=1; i<1000; i++)
@@ -133,17 +138,20 @@ public class Training
 		}
 	}
 
-	public static void testNeatOnly()
+	public static byte[] testNeatOnly()
 	throws Exception
 	{
-		IntersectionPopulationController ipc = new IntersectionPopulationController(4,1);
+		IntersectionPopulationController ipc;
 
 		NeatController nc = new NeatController();
 		long start;
 
 		int best = 2147483647;
+		byte bestnet[] = null;
+
 		for (int i=1; i<1000; i++)
 		{
+			ipc = new IntersectionPopulationController(NodeConfig.rng.nextInt(6)+4,NodeConfig.rng.nextInt(3)+1);
 			start = System.currentTimeMillis();
 			nc.setTrack(ipc.getBestIntersection());
 			nc.run();
@@ -151,12 +159,22 @@ public class Training
 			if (best > nc.getSomeCrashValue())
 			{
 				best = nc.getSomeCrashValue();
-				System.err.println(Arrays.toString(nc.getBestNetwork()));
-				System.err.println(bezierCurveArrayToString(ipc.getBestIntersectionPrintable()));
-				System.err.println();
+				bestnet = nc.getBestNetwork();
 			}
-
-			System.out.println(i + ": " + nc.getSomeCrashValue() + " (" + (System.currentTimeMillis()-start)/1000 + " s)");
 		}
+
+		return bestnet;
+	}
+
+	public static String[] generateBasic()
+	{
+		String tracks[] = new String[2];
+		IntersectionPopulationController ipc = new IntersectionPopulationController(false, 4,1);
+		tracks[0] = bezierCurveArrayToString(ipc.getBestIntersectionPrintable());
+
+		ipc = new IntersectionPopulationController(false, 8,1);
+		tracks[1] = bezierCurveArrayToString(ipc.getBestIntersectionPrintable());
+
+		return tracks;
 	}
 }

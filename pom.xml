@@ -42,7 +42,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>coevolution.Experiment1</mainClass>
+                            <mainClass>coevolution.TrainTest</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

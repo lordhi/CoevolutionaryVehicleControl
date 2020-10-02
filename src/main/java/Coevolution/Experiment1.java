@@ -27,6 +27,10 @@ implements Runnable
 	public static void main(String args[])
 	throws Exception
 	{
+		byte[] controller;
+		List<intersectionmanagement.simulator.track.Node> track = new ArrayList<>();
+
+
 		int max = Integer.parseInt(args[0]);
 		readTrackAndController("18" + args[1] + ".txt", 0);
 		readTrackAndController("14" + args[1] + ".txt", 1);
@@ -34,13 +38,24 @@ implements Runnable
 		readTrackAndController("14" + args[1] + ".txt", 3);
 		addManualCurves();
 
-		track = TrackParser.linkCurves(track);
+		startAll(max);
+	}
 
+	public static void startAll(int max)
+	{
+		Thread threads[] = new Thread[max];
+		track = TrackParser.linkCurves(track);
 		for (int i=0; i<max; i++)
 		{
-			Thread t = new Thread(new Experiment1());
-			t.run();
+			threads[i] = new Thread(new Experiment1(controller, track));
+			threads[i].start();
 		}
+		for (int i=0; i<max; i++)
+			try{
+				threads[i].join();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 	}
 
 	public Experiment1()
@@ -48,12 +63,18 @@ implements Runnable
 
 	}
 
+	public Experiment1(byte[] controller, List<intersectionmanagement.simulator.track.Node> track)
+	{
+		this.controller = controller;
+		this.track = track;
+	}
+
 	public void run()
 	{
 		MersenneTwister rng = new MersenneTwister();
 		try{
 			Trial trial = new Trial(rng.nextInt(), track, controller);
-			System.out.println(trial.runSimulation());
+			System.err.println(trial.runSimulation());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -70,19 +91,18 @@ implements Runnable
 
 	private static void addManualCurves()
 	{
-		//float xPositions[], float yPositions[]
-		//int precision, boolean active, int population
 		for (int i=0; i<manualX.length; i++)
 			track.add((new BezierCurve(manualX[i], manualY[i],
 				2, true, 0)).asSimCurve(controller));
 	}
 
-	private static void StringToTrack(String s, byte controller[], int index)
+	public static void StringToTrack(String s, byte newController[], int index)
 	{
+		controller = newController;
 		String nodes[] = s.split(";");
 		for (String node : nodes)
 		{
-			track.add(stringToCurve(node, index).asSimCurve(controller));
+			track.add(stringToCurve(node, index).asSimCurve(newController));
 		}
 	}
 
@@ -110,7 +130,7 @@ implements Runnable
 		return tmp;
 	}
 
-	private static byte[] StringToBytes(String s)
+	public static byte[] StringToBytes(String s)
 	{
 		String bytes[] = s.substring(1,s.length()-1).replace(" ", "").split(",");
 
